@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node server.js",
-    "build": "tsc"
+    "build": "tsc",
+    "offline": "tsc && sls offline"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
     "@nestjs/core": "^11.1.6",
+    "@nestjs/cqrs": "^11.0.3",
     "@nestjs/platform-express": "^11.1.6",
     "@vendia/serverless-express": "^4.12.6",
     "aws-lambda": "^1.0.7",

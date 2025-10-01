@@ -4,7 +4,7 @@ import * as path from 'path';
 
 @Injectable()
 export class TasksService {
-  private readonly dbPath = path.join(__dirname, '../../db.json');
+  private readonly dbPath = path.join(__dirname, '../../../db.json');
 
   private readDb() {
     const data = fs.readFileSync(this.dbPath, 'utf-8');
