@@ -2,9 +2,27 @@
   "name": "legacy-task-api",
   "version": "1.0.0",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "tsc",
+    "offline": "tsc && sls offline"
   },
   "dependencies": {
-    "json-server": "0.16.1"
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/core": "^11.1.6",
+    "@nestjs/cqrs": "^11.0.3",
+    "@nestjs/platform-express": "^11.1.6",
+    "@vendia/serverless-express": "^4.12.6",
+    "aws-lambda": "^1.0.7",
+    "json-server": "0.16.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^11.1.6",
+    "@types/aws-lambda": "^8.10.153",
+    "@types/node": "^24.6.1",
+    "serverless": "3",
+    "serverless-offline": "^14.4.0",
+    "typescript": "^5.9.3"
   }
 }
