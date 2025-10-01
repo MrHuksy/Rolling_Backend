@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
       - name: Checkout code
@@ -23,6 +24,9 @@ jobs:
 
       - name: Build the project
         run: yarn build
+
+      - name: Install Serverless Framework
+        run: npm install -g serverless
 
       - name: Deploy to AWS Lambda
         env:
