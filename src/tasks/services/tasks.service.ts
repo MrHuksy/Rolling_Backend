@@ -1,57 +1,70 @@
 import { Injectable } from '@nestjs/common';
-import * as fs from 'fs';
-import * as path from 'path';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, GetCommand, PutCommand, DeleteCommand, UpdateCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 
 @Injectable()
 export class TasksService {
-  private readonly dbPath = path.join(__dirname, '../../../db.json');
+  private readonly dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+  private readonly tableName = 'TasksTable';
 
-  private readDb() {
-    const data = fs.readFileSync(this.dbPath, 'utf-8');
-    return JSON.parse(data);
+  async getAllTasks() {
+    const params = {
+      TableName: this.tableName,
+    };
+    const result = await this.dynamoDb.send(new ScanCommand(params));
+    return result.Items || [];
   }
 
-  private writeDb(data: any) {
-    fs.writeFileSync(this.dbPath, JSON.stringify(data, null, 2));
+  async getTaskById(id: string) {
+    const params = {
+      TableName: this.tableName,
+      Key: { id },
+    };
+    const result = await this.dynamoDb.send(new GetCommand(params));
+    return result.Item || null;
   }
 
-  getAllTasks() {
-    const db = this.readDb();
-    return db.tasks;
-  }
+  async createTask(task: any) {
+    const existingTask = await this.getTaskById(task.id);
+    if (existingTask) {
+      throw new Error(`Task with ID ${task.id} already exists.`);
+    }
 
-  getTaskById(id: string) {
-    const db = this.readDb();
-    return db.tasks.find((task: any) => task.id === id);
-  }
-
-  createTask(task: any) {
-    const db = this.readDb();
     const newTask = { id: Date.now().toString(), ...task };
-    db.tasks.push(newTask);
-    this.writeDb(db);
+    const params = {
+      TableName: this.tableName,
+      Item: newTask,
+    };
+    await this.dynamoDb.send(new PutCommand(params));
     return newTask;
   }
 
-  deleteTask(id: string) {
-    const db = this.readDb();
-    const index = db.tasks.findIndex((task: any) => task.id === id);
-    if (index !== -1) {
-      db.tasks.splice(index, 1);
-      this.writeDb(db);
-      return { message: 'Task deleted successfully' };
+  async deleteTask(id: string) {
+    const existingTask = await this.getTaskById(id);
+    if (!existingTask) {
+      throw new Error(`Task with ID ${id} does not exist.`);
     }
-    return null;
+
+    const params = {
+      TableName: this.tableName,
+      Key: { id },
+    };
+    await this.dynamoDb.send(new DeleteCommand(params));
+    return { message: 'Task deleted successfully' };
   }
 
-  updateTask(id: string, updates: any) {
-    const db = this.readDb();
-    const task = db.tasks.find((task: any) => task.id === id);
-    if (task) {
-      Object.assign(task, updates);
-      this.writeDb(db);
-      return task;
+  async updateTask(id: string, updates: any) {
+    const existingTask = await this.getTaskById(id);
+    if (!existingTask) {
+      throw new Error(`Task with ID ${id} does not exist.`);
     }
-    return null;
+
+    const updatedTask = { ...existingTask, ...updates };
+    const params = {
+      TableName: this.tableName,
+      Item: updatedTask,
+    };
+    await this.dynamoDb.send(new PutCommand(params));
+    return updatedTask;
   }
 }
