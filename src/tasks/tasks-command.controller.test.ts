@@ -59,15 +59,22 @@ describe('TasksCommandController', () => {
       });
     });
 
-    it('fail when created format is invalid', async () => {
-      const dto = { ...validDto, created: '2025-01-01' };
+    it('fail when created format pattern is invalid', async () => {
+      const dto = { ...validDto, created: '2025-01-01' }; // wrong pattern
       await expect(pipe.transform(dto, { type: 'body', metatype: TaskDto } as any)).rejects.toMatchObject({
-        response: expect.objectContaining({ message: expect.arrayContaining(['created must be a valid date in the format DD/MM/YYYY']) })
+        response: expect.objectContaining({ message: expect.arrayContaining(['created must be a real calendar date in the format DD/MM/YYYY']) })
+      });
+    });
+
+    it('fail when created is an impossible calendar date', async () => {
+      const dto = { ...validDto, created: '33/12/2033' }; // passes regex, but invalid date
+      await expect(pipe.transform(dto, { type: 'body', metatype: TaskDto } as any)).rejects.toMatchObject({
+        response: expect.objectContaining({ message: expect.arrayContaining(['created must be a real calendar date in the format DD/MM/YYYY']) })
       });
     });
 
     it('fail when due is not a valid', async () => {
-      const dto = { ...validDto, due: 12345 };
+      const dto = { ...validDto, due: 12345 } as any;
       await expect(pipe.transform(dto, { type: 'body', metatype: TaskDto } as any)).rejects.toBeTruthy();
     });
   });
