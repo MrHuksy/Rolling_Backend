@@ -5,24 +5,11 @@ import { DynamoDBDocumentClient, GetCommand, PutCommand, DeleteCommand, UpdateCo
 import { TaskResponse } from '../types/task-response.type';
 import { TaskDto } from '../dto/task.dto';
 
-dotenv.config();
-
-// this is insecure, for testing only
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID || '';
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || '';
-const region = process.env.AWS_REGION || 'ap-southeast-2';
+// dotenv.config();
 
 @Injectable()
 export class TasksService {
-  private readonly dynamoDb = DynamoDBDocumentClient.from(
-    new DynamoDBClient({
-      region,
-      credentials: {
-        accessKeyId,
-        secretAccessKey
-      },
-    }),
-  );
+  private readonly dynamoDb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
   private readonly tableName = 'TasksTable';
 
   async getAllTasks() {
