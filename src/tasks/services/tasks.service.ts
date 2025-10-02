@@ -1,11 +1,8 @@
-import * as dotenv from 'dotenv';
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand, PutCommand, DeleteCommand, UpdateCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { TaskResponse } from '../types/task-response.type';
 import { TaskDto } from '../dto/task.dto';
-
-// dotenv.config();
 
 @Injectable()
 export class TasksService {
