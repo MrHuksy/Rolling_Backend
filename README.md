@@ -2,7 +2,9 @@
 
 Simple serverless Task API built with NestJS + CQRS, deployed on AWS Lambda + API Gateway + DynamoDB.
 
-Base URL (prod): https://rd1ng5uol1.execute-api.ap-southeast-2.amazonaws.com
+Backend Base URL (prod): https://rd1ng5uol1.execute-api.ap-southeast-2.amazonaws.com
+
+Frontend URL (prod): https://master.d1rdlry2cpntlj.amplifyapp.com/
 
 ## Stack
 - NestJS 11
